@@ -10,13 +10,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
-    env:
-      ANDROID_HOME: /usr/local/lib/android/sdk
-      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-      SDKMANAGER: /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,15 +23,25 @@ jobs:
           java-version: "17"
           cache: gradle
 
-      - name: Prepare Android SDK
+      - name: Locate Android SDK
         shell: bash
         run: |
-          set -euo pipefail
-          test -x "$SDKMANAGER"
-          export PATH="$(dirname "$SDKMANAGER"):$PATH"
-          "$SDKMANAGER" --version
-          yes | "$SDKMANAGER" --licenses >/dev/null || true
-          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          set -e
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          ls -la /usr/local/lib/android/sdk
+          find /usr/local/lib/android/sdk -maxdepth 4 -type f -name sdkmanager -print
+
+      - name: Verify Android SDK packages
+        shell: bash
+        run: |
+          set -e
+          SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          test -d "$SDK/platforms/android-35"
+          test -d "$SDK/build-tools/35.0.0"
+          test -d "$SDK/platform-tools"
+          echo "Android SDK is ready."
+          "$SDK/build-tools/35.0.0/aapt2" version || true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
