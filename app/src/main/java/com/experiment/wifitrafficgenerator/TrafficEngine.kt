@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 data class Stats(val bytes:Long,val currentMbps:Double,val averageMbps:Double)
 
-abstract class TrafficEngine(private val finished:(String)->Unit) {
+abstract class TrafficEngine(protected val finished:(String)->Unit) {
     val running=AtomicBoolean(false)
     @Volatile var bytes=0L
     protected var started=0L
