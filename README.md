@@ -11,3 +11,6 @@ GitHub Actions builds a debug APK automatically on push and can also be started 
 4. Start traffic.
 
 Use only on networks/devices you are authorized to test.
+
+
+Build pipeline updated: GitHub Actions builds the debug APK automatically.
