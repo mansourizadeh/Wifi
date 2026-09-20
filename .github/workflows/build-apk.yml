@@ -24,11 +24,9 @@ jobs:
           java-version: "17"
           cache: gradle
 
-      - name: Install Android SDK components
-        uses: android-actions/setup-android@v3
-
-      - name: Install required SDK packages
+      - name: Install required Android SDK packages
         run: |
+          yes | sdkmanager --licenses > /dev/null || true
           sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Install Gradle 8.7
